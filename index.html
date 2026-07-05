@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elijah & Ciara's Journal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #faf7f5;
+            color: #2d2d2d;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #e8d5d0;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 2px solid #d4b5ad;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            color: #5a3d35;
+            font-weight: 600;
+        }
+        
+        .header .names {
+            font-size: 0.9rem;
+            color: #8b6b62;
+            margin-top: 0.25rem;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .prompt-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 4px solid #c4956a;
+        }
+        
+        .prompt-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #c4956a;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .prompt-text {
+            font-size: 1.05rem;
+            color: #4a3f3a;
+            font-style: italic;
+        }
+        
+        .new-entry-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #8b6b62;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        
+        .new-entry-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .entry-form {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            display: none;
+        }
+        
+        .entry-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #6b5b55;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1.5px solid #e0d5d0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #faf7f5;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.85rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: #8b6b62;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e8d5d0;
+            color: #5a3d35;
+        }
+        
+        .entries-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .entry {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: relative;
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .entry-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .avatar.elijah {
+            background: #6b8fa3;
+        }
+        
+        .avatar.ciara {
+            background: #c4956a;
+        }
+        
+        .entry-meta {
+            font-size: 0.8rem;
+            color: #9a8a82;
+        }
+        
+        .entry-prompt {
+            font-size: 0.85rem;
+            color: #c4956a;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #faf5f0;
+            border-radius: 8px;
+        }
+        
+        .entry-body {
+            font-size: 1rem;
+            color: #3d3531;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        
+        .entry-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0e8e4;
+        }
+        
+        .entry-actions button {
+            background: none;
+            border: none;
+            color: #8b6b62;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .entry-actions button:hover {
+            background: #f5efec;
+        }
+        
+        .love-note {
+            background: #faf0f0;
+            border: 1.5px solid #e8d0d0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .love-note .heart {
+            color: #c47575;
+            font-size: 1.5rem;
+        }
+        
+        .love-note p {
+            color: #8b5a5a;
+            font-size: 0.95rem;
+            margin-top: 0.35rem;
+        }
+        
+        .edit-mode textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.75rem;
+            border: 1.5px solid #c4956a;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9a8a82;
+        }
+        
+        .empty-state .heart {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Our Journal</h1>
+        <div class="names">Elijah & Ciara</div>
+    </div>
+    
+    <div class="container">
+        <div class="love-note" id="loveNote"></div>
+        
+        <div class="prompt-card" id="promptCard">
+            <div class="prompt-label">Today's Prompt</div>
+            <div class="prompt-text" id="promptText">Loading...</div>
+        </div>
+        
+        <button class="new-entry-btn" onclick="showForm()">+ Write a New Entry</button>
+        
+        <div class="entry-form" id="entryForm">
+            <div class="form-group">
+                <label>Who's writing?</label>
+                <select id="authorSelect">
+                    <option value="Elijah">Elijah</option>
+                    <option value="Ciara">Ciara</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>What's on your mind? (or use the prompt above)</label>
+                <textarea id="entryBody" placeholder="Dear..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="hideForm()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+            </div>
+        </div>
+        
+        <div class="entries-list" id="entriesList"></div>
+    </div>
+
+    <script>
+        // Prompts that rotate daily
+        const prompts = [
+            "What's one thing I did today that made you smile?",
+            "Describe the moment you realized you loved me.",
+            "What's a dream you want us to achieve together?",
+            "What does 'home' feel like when you're with me?",
+            "Tell me about a time I made you feel truly seen.",
+            "What's one small thing I do that you never want me to stop?",
+            "If we could teleport anywhere right now, where would we go?",
+            "What's something you're grateful for in our relationship?",
+            "Describe your favorite memory of us this month.",
+            "What's one thing you want to learn or do together?",
+            "How do I make hard days easier for you?",
+            "What's a song that reminds you of us? Why?",
+            "Tell me something silly I do that you secretly love.",
+            "What are you most proud of us for?",
+            "If you could relive one day with me, which would it be?",
+            "What's something you want to say but haven't found the right moment?",
+            "How has loving me changed you?",
+            "What's your favorite way we show love without words?",
+            "Tell me about a future moment you can't wait to share with me.",
+            "What do you love most about yourself when you're with me?"
+        ];
+        
+        const loveNotes = [
+            "I love you because you make ordinary moments feel like magic.",
+            "I love you — today, tomorrow, and every day after.",
+            "I love you more than coffee, and that's saying something.",
+            "I love you. Just wanted to make sure you knew.",
+            "I love you for a thousand reasons, and I'm still counting.",
+            "I love you — the you that you are, the you that you're becoming.",
+            "I love you. Full stop. No conditions.",
+            "I love you in the chaos, in the quiet, in everything between.",
+            "I love you because you're my favorite person to do nothing with.",
+            "I love you — and I promise to keep showing you."
+        ];
+        
+        let entries = JSON.parse(localStorage.getItem('elijahCiaraJournal') || '[]');
+        let editingId = null;
+        
+        // Set daily prompt based on date
+        function getDailyPrompt() {
+            const today = new Date();
+            const index = (today.getFullYear() * 365 + today.getMonth() * 31 + today.getDate()) % prompts.length;
+            return prompts[index];
+        }
+        
+        // Set daily love note
+        function getDailyLoveNote() {
+            const today = new Date();
+            const index = (today.getFullYear() * 365 + today.getMonth() * 31 + today.getDate() + 7) % loveNotes.length;
+            return loveNotes[index];
+        }
+        
+        function init() {
+            document.getElementById('promptText').textContent = getDailyPrompt();
+            document.getElementById('loveNote').innerHTML = `
+                <div class="heart">❤️</div>
+                <p>${getDailyLoveNote()}</p>
+            `;
+            renderEntries();
+        }
+        
+        function showForm() {
+            document.getElementById('entryForm').classList.add('active');
+            document.getElementById('entryBody').value = '';
+            document.getElementById('entryBody').focus();
+            editingId = null;
+        }
+        
+        function hideForm() {
+            document.getElementById('entryForm').classList.remove('active');
+            editingId = null;
+        }
+        
+        function saveEntry() {
+            const author = document.getElementById('authorSelect').value;
+            const body = document.getElementById('entryBody').value.trim();
+            if (!body) return;
+            
+            const entry = {
+                id: editingId || Date.now(),
+                author,
+                body,
+                prompt: getDailyPrompt(),
+                date: editingId ? entries.find(e => e.id === editingId).date : new Date().toISOString()
+            };
+            
+            if (editingId) {
+                const idx = entries.findIndex(e => e.id === editingId);
+                entries[idx] = entry;
+            } else {
+                entries.unshift(entry);
+            }
+            
+            localStorage.setItem('elijahCiaraJournal', JSON.stringify(entries));
+            hideForm();
+            renderEntries();
+        }
+        
+        function deleteEntry(id) {
+            if (confirm('Delete this entry?')) {
+                entries = entries.filter(e => e.id !== id);
+                localStorage.setItem('elijahCiaraJournal', JSON.stringify(entries));
+                renderEntries();
+            }
+        }
+        
+        function startEdit(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+            
+            document.getElementById('authorSelect').value = entry.author;
+            document.getElementById('entryBody').value = entry.body;
+            document.getElementById('entryForm').classList.add('active');
+            editingId = id;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function formatDate(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: 'numeric', minute: '2-digit'
+            });
+        }
+        
+        function renderEntries() {
+            const list = document.getElementById('entriesList');
+            
+            if (entries.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="heart">💌</div>
+                        <p>No entries yet. Be the first to write something sweet!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = entries.map(entry => `
+                <div class="entry" data-id="${entry.id}">
+                    <div class="entry-header">
+                        <div class="entry-author">
+                            <div class="avatar ${entry.author.toLowerCase()}">${entry.author[0]}</div>
+                            <div>
+                                <div style="font-weight: 600; color: #3d3531;">${entry.author}</div>
+                                <div class="entry-meta">${formatDate(entry.date)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entry-prompt">💭 ${entry.prompt}</div>
+                    <div class="entry-body">${escapeHtml(entry.body)}</div>
+                    <div class="entry-actions">
+                        <button onclick="startEdit(${entry.id})">Edit</button>
+                        <button onclick="deleteEntry(${entry.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Auto-rotate prompt every day at midnight
+        init();
+    </script>
+</body>
+</html>
